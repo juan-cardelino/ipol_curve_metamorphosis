@@ -1,0 +1,4 @@
+[core]
+    remote = munch
+['remote "munch"']
+    url = ssh://munch/home/juanc/juanc/live/dvc
