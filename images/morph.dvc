@@ -1,0 +1,5 @@
+outs:
+- md5: cd0bf69405c926fef0afdc125df96c0f.dir
+  size: 815245
+  nfiles: 11
+  path: morph
