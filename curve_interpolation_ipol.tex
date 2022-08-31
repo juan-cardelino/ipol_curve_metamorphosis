@@ -48,15 +48,24 @@
 % For algorithms, please use the algorithm2e package instead of
 % algorithmx for simplicity and a uniform style.
 
-\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
 % define input and output keywords
 \SetKwInOut{Input}{input}
 \SetKwInOut{Output}{output}
 % define comment style
-\SetKwComment{Comment}{}{}
-\newcommand{\mycmtsty}[1]{\em \small #1}
+%\SetKwComment{Comment}{}{}
+%\newcommand{\mycmtsty}[1]{\em \small #1}
+\newcommand{\mycmtsty}[1]{\footnotesize\ttfamily\textcolor{OliveGreen}{#1}}
 \SetCommentSty{mycmtsty}
+% %% This declares a command \Comment
+\SetKwComment{Comment}{/* }{ */}
+%define by keyword
+\SetKw{KwBy}{by}
 
+
+\begin{center}
+	
+\end{center}
 % Use \newtheorem{} for remarks and definitions.
 \usepackage{amsthm}
 \newtheorem{definition}{Definition}
@@ -76,7 +85,7 @@
 \usepackage{sidecap}
 %\usepackage[hang,center]{subfigure}
 \usepackage{caption,subfig}
-\usepackage[table]{xcolor}
+\usepackage[table,dvipsnames]{xcolor}
 \usepackage{multicol}
 \usepackage{listings}
 \usepackage{color}
@@ -702,6 +711,8 @@ While the results are interesting and useful for the purpose of this thesis, the
 
 In the first place, we are interested in implementing the parts of the paper that were left out in this work, mainly working with closed curves and piecewise interpolated curves.
 Second, and most important, this curvature representation has proven a great potential to be used as a descriptor of the curve, for the task of interpolation. But there are other tasks that could take advantage of meaningful curve descriptors, for example for classification and stabilization tasks. As an example, we are interested in using it as a filtering technique to remove artifacts in facial features tracking.
+
+\input{pseudocode_appendix}
 
 \bibliographystyle{siam}
 \bibliography{../publications/tools/journal_list_long,../publications/tools/references,../publications/tools/hierarchical_segmentation,../publications/tools/bib_enric,../publications/tools/reproducibility,../publications/tools/varios,../publications/tools/graph_theory,../publications/tools/slow_motion.bib,../publications/tools/computer_graphics.bib,../publications/tools/curves.bib}

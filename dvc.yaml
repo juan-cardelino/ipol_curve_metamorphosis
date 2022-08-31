@@ -1,0 +1,14 @@
+
+stages:
+  exp1:
+    cmd: cp ../pepe.png images/
+    deps:
+      - ../pepe.png
+    outs:
+      - images/pepe.png
+  chapter05a:
+    cmd: mkdir images/chapter_05a/ ; cp -Lr ../phd_thesis/images/chapter_05a/ images/chapter_05a/
+    deps:
+      - ../phd_thesis/images/chapter_05a/
+    outs:
+      - images/chapter_05a/   

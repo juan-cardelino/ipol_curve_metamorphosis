@@ -1,0 +1,181 @@
+\appendix
+\section{Algorithm's pseudocode}
+
+\begin{figure}[h]
+	\centering
+	\shadowbox{
+		\begin{minipage}{14cm}
+			The \verb|curve| data type implemented in the source code is defined with the following fields.\\
+			Basic attributes:
+			\begin{itemize}
+				\item \verb|p|: integer, number of points of the curve
+				\item \verb|s|: $1 \times p$, parameter value
+				\item \verb|x|: $2 \times p$, position
+			\end{itemize}
+			
+			Derived attributes:
+			\begin{itemize}
+				\item \verb|x_0|: $2\times1$, start point. $X_o \in \mathbb{R}^{2}$
+				\item \verb|x_f|: $2 \times 1$, end point. $X_f \in \mathbb{R}^{2}$
+				\item \verb|r|: double, ratio of scaling
+				\item \verb|l|: double, length of the curve
+				\item \verb|lc|: double, length of the cord defined by start and end point
+				\item \verb|theta|: double, initial angle
+				\item \verb|G|: $2\times1$, middle point of the cord
+			\end{itemize}
+			
+			Differential magnitudes:
+			\begin{itemize}
+				\item \verb|n|: $2 \times (p-1)$, normal
+				\item \verb|c|: $1 \times p$, curvature
+				\item \verb|v|: $2 \times (p-1)$, velocities
+				\item \verb|at|: $1 \times p$, angle of the tangent vector
+				\item \verb|phi|: $1 \times p$, angle
+			\end{itemize}
+		\end{minipage}
+		\cornersize{.1}
+	}
+	\caption{Description of the \emph{curve} data type.}
+	\label{fig:algo:image_interpolation:curve_interpolation:data_type}
+\end{figure}
+
+
+\RestyleAlgo{ruled}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_main\_curvature\_interpolation}
+	\KwIn{polyline filenames $poly1\_fname$ and $poly2\_fname$, time increment $dt$ [optional]}
+	
+	\Comment{1.-CONFIGURATION}
+	\Comment{initialize configuration variables and create output folder}
+	$ind\_polyline \leftarrow 1$ \Comment*[r]{Use first curve of each input, since the code supports arrays of curves}
+	$dt \leftarrow 0.5$ \Comment*[r]{set default value, if not set}
+	
+	\Comment{2.-READ INPUT}
+	$lines1 \leftarrow read\_curve(poly1\_fname)$ \Comment*[r]{read first curve}
+	$poly \leftarrow lines1[ind\_polyline]$\;
+	$[c1\_scaled, c1, c11] \leftarrow curve\_polyline\_prepare\_for\_interpolation(poly)$ \Comment*[r]{convert polyline to curve object}
+	$lines2 \leftarrow read\_curve(poly2\_fname)$ \Comment*[r]{read second curve}
+	$poly2 \leftarrow lines2[ind\_polyline]$\;
+	$[c2\_scaled, c2, c22] \leftarrow curve\_polyline\_prepare\_for\_interpolation(poly)$ \Comment*[r]{convert polyline to curve object}
+	$[xx1,xx2] \leftarrow sequence\_regenerate\_2(c1\_scaled,c2\_scaled)$ \Comment*[r]{resample curves to the same grid}
+	
+	\Comment{3.-INTERPOLATE}
+	$x_0 \leftarrow dt*c1\_scaled[x_0]+(1-dt)*c2\_scaled[x_0]$\;
+	$L \leftarrow dt*c1[l]+(1-dt)*c2[l]$\;
+	$phi\_0 \leftarrow 0$\;
+	$xi\_angle \leftarrow curve\_interpolate\_angle(xx1, xx2, L, dt, x\_0, phi\_0)$\;
+	$xi\_angle \leftarrow curve\_fill\_data(xi\_angle, 0)$ \Comment*[r]{update parameters of the curve}
+	$xi\_extrin \leftarrow curve\_interpolate\_extrinsic(xi\_angle, c1, c2, dt)$\;
+	$xi\_extrin \leftarrow curve\_fill\_data(xi\_extrin, 0)$ \Comment*[r]{update parameters of the curve}
+	$curve\_get\_bounding\_box\_of\_two\_curves(...)$, $curve\_rect\_union(...)$ \Comment*[r]{determine bounding boxes}
+	%$rect1 \leftarrow curve\_get\_bounding\_box\_of\_two\_curves(c1[x], xi\_extrin[x])$
+	% %$rect1 \leftarrow curve\_get\_bounding\_box\_of\_two\_curves(c1[x], xi\_extrin[x])$
+	% %$rect2 \leftarrow curve\_get\_bounding\_box\_of\_two\_curves(c2[x], xi\_extrin[x])$
+	% %$rect\_union \leftarrow curve\_rect\_union(rect1, rect2)$ \Comment{determine max bounding boxes}
+	% %$[ax\_lim, x\_lims, y\_lims] \leftarrow curve\_compute\_axis\_limits(rect\_union)$ \Comment{compute margins of plots}
+	
+	\Comment{4.-MORPH}
+	$ci\_angle\_array \leftarrow curve\_morph\_angle(xx1, xx2, c1.l, c2.l, dt, ax\_lim, opt.save)$ \Comment*[r]{interpolate using angles}
+	$ci\_curvature\_array \leftarrow curve\_morph\_curvature(xx1, xx2, dt, ax\_lim)$  \Comment*[r]{interpolate using curvature}
+	
+	\Comment{5.-PLOT}
+	\For {$k \gets 1$ to $length(ci\_angle\_array)$}{
+		\Comment{plot the $k$th step of $curve\_angle$ $ci\_angle\_array[k]$}
+		\Comment{plot the $k$th step of $curve\_curvature$ $ci\_angle\_curvature\_array[k]$}
+	}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_polyline\_prepare\_for\_interpolation}
+	\KwIn{polyline object ($poly$), execution type ($type$)}
+	\KwOut{scaled curve $c1\_scaled$, upsampled and reparametrized curve $c1$, upsampled curve $c11$}
+	$c11 \leftarrow$ generate upsampled curve from $poly$ \Comment{$polyline\_to\_curve\_2(...)$}
+	$c1 \leftarrow$ reparametrize $c11$ to arc lenght \Comment{$curve\_reparametrize(...)$}
+	\Comment{compute normals and update angle signatures of $c1$}
+	$c1.c \leftarrow [c1.c, c1.c(1)]$\;
+	\Comment{update parameters of $c1$}
+	$c1\_scaled \leftarrow$ scale curve $c1$ to have length 1\;
+	\Comment{update parameters of $c1\_scaled$}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_interpolate\_angle}
+	\KwIn{curve ($c1$), curve ($c2$), (\tcom{$L$}), time ($t$), starting point ($x\_0$), angle ($phi\_0$)}
+	\KwOut{interpolated curve ($xi$)}
+	% \Comment{Interpolate two curves using their angle signatures}
+	\Comment{Copy $c1.s$ and $x\_0$ to $xi$}
+	% $xi.s \leftarrow c1.s$\;
+	% $xi.x\_0 \leftarrow x\_0$\;
+	$xi.at \leftarrow t*c1.at+(1-t)*c2.at$\;
+	$xi.phi \leftarrow t*c1.phi+(1-t)*c2.phi$\;
+	$xi.x \leftarrow curve\_angle\_reconstruct(xi,x\_0,L)$ \Comment{Reconstruct the curve}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_interpolate\_extrinsic}
+	\KwIn{curve ($xi$), curve ($x1$), curve ($x2$), time ($t$), execution type ($type$)}
+	\KwOut{interpolated curve ($xif$)}
+	\Comment{\tcom{here we are assuming that the curve was interpolated using curvature and starting point x\_0 and angle phi\_0}}
+	\Comment{Copy arguments from $xi$ to $xif$}
+	\Comment{Interpolate starting and ending points}
+	
+	$xd.G \leftarrow t*x1.G+(1-t)*x2.G$\;
+	\Comment{compute rotation angle}
+	\If {$abs(x1.theta-x2.theta)< \pi$}
+	{$xd.theta \leftarrow x2.theta+(x1.theta-x2.theta)/2$}
+	\Else
+	{$xd.theta \leftarrow x2.theta+2\pi-(x1.theta-x2.theta)/2$}
+	$xd.lc \leftarrow t*x1.lc+(1-t)*x2.lc$\;
+	$dir \leftarrow -[cos(xd.theta) ; sin(xd.theta)]$\;
+	$xd.x\_0 \leftarrow xd.G-xd.lc*dir/2$\;
+	$xd.x\_f \leftarrow xd.G+xd.lc*dir/2$\;
+	$Ci \leftarrow xi.G$\;
+	$Cd \leftarrow xd.G$\;
+	
+	\Comment{compute ratio of the scaling}
+	\Comment{compute rotation angle, construct rotation matrix and finally rotate the curve}
+	
+	\Comment{\tcom{Falta especificar}}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_morph\_angle}
+	\KwIn{curve 1 $c1$, curve 2 $c2$, length of curve 1 $l1$, length of curve 2 $l2$, time increment $dt$, axes limits $ax\_lim$, save plots $save$}
+	\KwOut{interpolated curves $ci\_array$}
+	
+	\Comment{plot input curves $c1$ and $c2$ according to $save$}
+	$ci\_array \leftarrow cell(1,1)$\;
+	$phi\_0 \leftarrow 0$\;
+	\For {$t \gets 0$ \KwTo $1$ \KwBy $dt$}{
+		% \Comment{interpolate curves for each step}
+		$x\_0 \leftarrow t*c1.x\_0+(1-t)*c2.x\_0$\;
+		$L \leftarrow t*l1+(1-t)*l2$\;
+		$xi\_angle \leftarrow$ $curve\_interpolate\_angle(c1,c2,L,t,x\_0,phi\_0)$ \Comment*[r]{interpolate by angle}
+		\Comment{update parameters of $xi\_angle$}
+		
+		$[xi\_extrin] \leftarrow curve\_interpolate\_extrinsic(xi\_angle,c1,c2,t)$\;
+		$xi \leftarrow$ update parameters of $xi\_extrin$\;
+		$xi.t \leftarrow t$\;
+		
+		\Comment{append $xi$ to $ci\_array$}
+	}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{curve\_morph\_curvature}
+	\KwIn{curve $c1$, curve $c2$, time increment $dt$, axes limits $ax\_lim$ [optional], type of execution $type$ [optional]}
+	\KwOut{interpolated curves $ci\_array$}
+	
+	$xi.s \leftarrow c1.s$\;
+	$pt \leftarrow 0.2$\;
+	\Comment{plot input curves $c1$ and $c2$ using $ax\_lim$, according to $save$}
+	$ci\_array \leftarrow cell(1,1)$\;
+	
+	\For{$t \gets 0$ \KwTo $1$ \KwBy $dt$}{
+		% \Comment{interpolate curves for each step}
+		$xi \leftarrow curve\_interpolate\_curvature\_full(c1, c2, t, opt.type)$\;
+		$xi.t \leftarrow t$\;
+		\Comment{append $xi$ to $ci\_array$}
+	}
+\end{algorithm}
