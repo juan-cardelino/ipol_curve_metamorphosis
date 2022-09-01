@@ -1,14 +1,15 @@
 
 stages:
-  exp1:
-    cmd: cp ../pepe.png images/
+  latex:
+    cmd: cp ../publications/tools/jfc.sty ../publications/tools/journal_list_long.bib ../publications/tools/curves.bib ../publications/tools/varios.bib .
     deps:
-      - ../pepe.png
+      - ../publications/tools/jfc.sty
     outs:
-      - images/pepe.png
-  chapter05a:
+      - jfc.sty journal_list_long.bib curves.bib varios.bib
+  images:
     cmd: mkdir images/chapter_05a/ ; cp -Lr ../phd_thesis/images/chapter_05a/ images/chapter_05a/
     deps:
       - ../phd_thesis/images/chapter_05a/
     outs:
       - images/chapter_05a/   
+
