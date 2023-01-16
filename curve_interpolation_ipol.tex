@@ -171,26 +171,24 @@ In this work we address the problem of morphing between of two planar curves in 
 One of the main problems of curve interpolation arises when one uses a representation of the curve that mixes extrinsic and intrinsic properties of the curve. This could lead to changes in the intrinsic properties of the curves due to differences in the extrinsic parameters. For instance, linear interpolation on the coordinates of two curves could generate self intersections due to different extrinsic positions of the curves, as depicted in \mbox{Figure \ref{fig:image_interpolation:curve_interpolation:example}} where the initial regular curve completely losses its shape and generates discontinuities. We will call this method Euclidean (or linear) interpolation.\\
 
 \subsection{Previous work}
-Morphing (a.k.a. shape blending) between two surfaces is a key problem in Computer Graphics which serves as a key component in different animation and special effects techniques.
-This problem has been approached in general from a 3D surface perspective \tcom{cite}, but special attention has been dedicated to the particular case of 2D planar curves, due to its important use cases.
+Shape morphing (or shape blending) between two surfaces is a key problem in Computer Graphics which serves as a key component in different animation and special effects techniques.
+This problem has been approached in general from a 3D surface perspective \cite{math:computer_graphics:alexa:2000:as_rigid_as_possible_shape_interpolation}\tcom{more citations}, but special attention has been dedicated to the particular case of 2D planar curves, due to its great number of practical use cases.
 We can summarize the shape blending problem in two key parts: 
   
 \begin{enumerate}
-    \item Representation, defines how the curve is described and manipulated:
+    \item \textbf{The curve representation}, which defines how the curve is described and manipulated:
         \begin{enumerate}
-            \item How the input curve is expressed: polylines, splines, sampled curves, implicit surfaces.
-            \item The choice of features used for the actual blending (feature extraction)
+            \item How the input curve is expressed: polylines, splines, sampled curves, implicit surfaces or bitmaps \tcom{Agregar referencias}.
+            \item The choice of features used for the actual blending (feature extraction), which usually includes directly using the input representation, using alternative representations such as the skeleton of the shape or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
         \end{enumerate}
-    \item Morphing process, which in most cases can be described as a two-step approach:
+    \item \textbf{The morphing process}, which in most cases can be described as a two-step approach:
         \begin{enumerate}
-            \item feature correspondence: how 
-            \item feature interpolation
+            \item feature correspondence: how to define a mapping between meaningful features of each shape, this usually includes a registration step between control points or a correspondence between features in the shape space.
+            \item feature interpolation: this step involves first interpolating the features themselves, which in the case of most approaches accounts for interpolating the intrinsic parameters; and second, interpolating the extrinsic parameters in order to correct place the resulting curve in the input space.
         \end{enumerate}
 \end{enumerate}
 
-It is also important to take into account the applications in which the blending technique will be used, because it may add additional constraints to the algorithms selected.
-
-\tcom{REVIEW DE LITERATURA}
+It is also important to take into account the applications in which the blending technique will be used, because it may add additional constraints to the algorithms selected (resource usage, real-time requirements, etc).
 
 In the context of this work we are interested evaluating the possibility of blending the boundaries of regions produced by a 2D image segmentation algorithm, thus working with 2D planar curves. In addition, since this will a piece of a more complex pipeline, we were interested on fast and simple algorithms, which somehow rules out the use of a learning based approach.
 For this reason, we follow the approach presented in \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves}, where the authors propose a curve representation that separates intrinsic and extrinsic properties and interpolates them separately. 
@@ -725,9 +723,9 @@ The main contributions of this work are:
 	\item Applying the proposed algorithm to the case of curves represented as control points. We applied the algorithm to a case that was not contemplated in the original proposal. We proposed minor changes to extend the technique to this scenario and showed that it works correctly.
 \end{itemize}
 
-While the results are interesting and useful for the purpose of this thesis, there are some points that could be improved
+While the results are interesting and useful for the purpose of this work, there are some points that could be improved:
 \begin{itemize}
-	\item The implemented a version of the algorithm only works with open curves. The extension to closed curves is proposed in the original work, and it is very straightforward, but it was out of the scope of this work. 
+	\item The implemented version of the algorithm only works with open curves. The extension to closed curves is proposed in the original work, and it is very straightforward, but it was out of the scope of this work. 
 	\item The same applies to piecewise interpolation of curves. As it is not important for our application, we didn't reproduce that part, but this could be interesting for other computer graphics applications.
 \end{itemize}
 
