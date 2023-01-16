@@ -5,7 +5,10 @@ stages:
     deps:
       - ../publications/tools/jfc.sty
     outs:
-      - jfc.sty journal_list_long.bib curves.bib varios.bib
+      - jfc.sty 
+      - journal_list_long.bib
+      - curves.bib
+      - varios.bib
   images:
     cmd: mkdir images/chapter_05a/ ; cp -Lr ../phd_thesis/images/chapter_05a/ images/chapter_05a/
     deps:
