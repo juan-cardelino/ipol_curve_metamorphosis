@@ -154,7 +154,7 @@
 %
 \begin{figure}[h]
 	\centering
-	\subfloat[Direct interpolation]{
+	\subfloat[Euclidean interpolation]{
 		\includegraphics[width=\anchodos]{\chapFiveDir/curves/example_interp_euclidean.png}
 		\label{fig:image_interpolation:curve_interpolation:example:euclidean}
 	}
@@ -162,7 +162,7 @@
 		\includegraphics[width=\anchodos]{\chapFiveDir/curves/example_interp_curvature.png}
 		\label{fig:image_interpolation:curve_interpolation:example:curvature}
 	}
-	\caption{Example of two possible choices of curve interpolation. Input curves are depicted in blue and red, and the interpolated curve at $t=0.5$ is depicted in green. \protect\subref{fig:image_interpolation:curve_interpolation:example:euclidean} Interpolation performed directly over the control points. \protect\subref{fig:image_interpolation:curve_interpolation:example:curvature} Interpolation performed only in intrisinc shape parameters. Note how the choice of the interpolation method can greatly affect the results.}
+	\caption{Example of two possible choices of curve interpolation. Input curves are depicted in blue and red, and the interpolated curve at $t=0.5$ is depicted in green. \protect\subref{fig:image_interpolation:curve_interpolation:example:euclidean} Interpolation performed directly over the control points (Euclidean interpolaton). \protect\subref{fig:image_interpolation:curve_interpolation:example:curvature} Interpolation performed only in intrisinc shape parameters. Note how the choice of the interpolation method can greatly affect the results.}
 	\label{fig:image_interpolation:curve_interpolation:example}
 \end{figure}
 %
@@ -171,26 +171,27 @@ In this work we address the problem of morphing between of two planar curves in 
 One of the main problems of curve interpolation arises when one uses a representation of the curve that mixes extrinsic and intrinsic properties of the curve. This could lead to changes in the intrinsic properties of the curves due to differences in the extrinsic parameters. For instance, linear interpolation on the coordinates of two curves could generate self intersections due to different extrinsic positions of the curves, as depicted in \mbox{Figure \ref{fig:image_interpolation:curve_interpolation:example}} where the initial regular curve completely losses its shape and generates discontinuities. We will call this method Euclidean (or linear) interpolation.\\
 
 \subsection{Previous work}
-Shape morphing (or shape blending) between two surfaces is a key problem in Computer Graphics which serves as a key component in different animation and special effects techniques.
+Shape morphing (or shape blending) between two surfaces is a key problem in Computer Graphics which serves as an important component in different animation and special effects techniques.
 This problem has been approached in general from a 3D surface perspective \cite{math:computer_graphics:alexa:2000:as_rigid_as_possible_shape_interpolation}\tcom{more citations}, but special attention has been dedicated to the particular case of 2D planar curves, due to its great number of practical use cases.
-We can summarize the shape blending problem in two key parts: 
+In most of the works of the literature we can identify two parts of the 2D shape blending problem: 
   
 \begin{enumerate}
     \item \textbf{The curve representation}, which defines how the curve is described and manipulated:
         \begin{enumerate}
             \item How the input curve is expressed: polylines, splines, sampled curves, implicit surfaces or bitmaps \tcom{Agregar referencias}.
-            \item The choice of features used for the actual blending (feature extraction), which usually includes directly using the input representation, using alternative representations such as the skeleton of the shape or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
+            \item The choice of features used for the actual blending (feature extraction), which usually includes the use of:
+            directly using the input representation, using alternative representations such as the skeleton of the shape \cite{computer_science:computer_graphics:shapira:1995:shape_blending_using_the_star_skeleton} or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
         \end{enumerate}
     \item \textbf{The morphing process}, which in most cases can be described as a two-step approach:
         \begin{enumerate}
             \item feature correspondence: how to define a mapping between meaningful features of each shape, this usually includes a registration step between control points or a correspondence between features in the shape space.
-            \item feature interpolation: this step involves first interpolating the features themselves, which in the case of most approaches accounts for interpolating the intrinsic parameters; and second, interpolating the extrinsic parameters in order to correct place the resulting curve in the input space.
+            \item feature interpolation: this step involves first interpolating the features themselves, which in the case of most approaches accounts for interpolating the intrinsic parameters; and second, interpolating the extrinsic parameters in order to  place the resulting curve in the input space.
         \end{enumerate}
 \end{enumerate}
 
-It is also important to take into account the applications in which the blending technique will be used, because it may add additional constraints to the algorithms selected (resource usage, real-time requirements, etc).
+It is also important to take into account the applications in which the blending technique will be used, because it may add additional constraints to the selected algorithms  (resource usage, real-time requirements, etc).
 
-In the context of this work we are interested evaluating the possibility of blending the boundaries of regions produced by a 2D image segmentation algorithm, thus working with 2D planar curves. In addition, since this will a piece of a more complex pipeline, we were interested on fast and simple algorithms, which somehow rules out the use of a learning based approach.
+In the context of this work we are evaluating the possibility of blending the boundaries of regions produced by a 2D image segmentation algorithm, thus working with 2D planar curves. In addition, since this will be a piece of a more complex pipeline, we were interested on fast and simple algorithms, which somehow rules out the use of a learning based approach.
 For this reason, we follow the approach presented in \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves}, where the authors propose a curve representation that separates intrinsic and extrinsic properties and interpolates them separately. 
 
 In that work, the authors propose a smooth interpolation between two free-form parametric curves, which is carried out by linearly interpolating intrinsic curvature properties. In the following we will review \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves}, reproduce its results and discuss some implementation details
@@ -298,7 +299,7 @@ In Figure \ref{fig:image_interpolation:curve_interpolation:curvature} we show th
 	\label{fig:image_interpolation:curve_interpolation:curvature}
 \end{figure}
 
-In the general case, for this approach to work, two conditions are required. First, the curve needs to be correctly sampled, i.e. sampling rate must be higher than Nyquist rate for both functions $x(t)$ and $y(t)$.
+In the general case, for this approach, two conditions are required. First, the curve needs to be correctly sampled, i.e. sampling rate must be higher than Nyquist rate for both functions $x(t)$ and $y(t)$.
 Second, the sampling needs to be performed at an almost regular speed, i.e. $||C'(t)|| \approx const.$
 
 \subsection{Application to polylines}\label{sec:curve_interpolation:curve_reconstruction:polylines}
@@ -314,13 +315,13 @@ Second, the sampling needs to be performed at an almost regular speed, i.e. $||C
 		\label{fig:curve_interpolation:control_points:detail}
 	}
 	\caption{Example of preprocessing of an input curve given by control points. 
-		\protect\subref{fig:curve_interpolation:control_points:c1} Complete curve with sparse control points are represented in blue and interpolated points are shown in blue.
+		\protect\subref{fig:curve_interpolation:control_points:c1} Complete curve with sparse control points are represented as a blue line and interpolated points are shown as blue dots.
 		\protect\subref{fig:curve_interpolation:control_points:detail} Detail of the lower right part of the curve.
 	}
 	\label{fig:curve_interpolation:control_points}
 \end{figure}
 
-\tcom{One of the applications of interest of these techniques is to work with sparsely sampled curves (polylines), which are used as control points in many graphics applications}. In order to develop a curve interpolation algorithm usable in this case, we must obtain a dense representation of the curve. In this section we explain such interpolation under the (strong) assumption that the interpolation method used to generate  the curve between those control points can be arbitrarily chosen. This is a strong assumption, which has to be validated in the implementation application and test if it introduces noticeable alterations in the interpolation results.
+One of the applications of interest for these techniques is to work with sparsely sampled curves (polylines), which are used as control points in many graphics applications. In order to develop a curve interpolation algorithm usable in this case, we must obtain a dense representation of the curve. In this section we explain such interpolation under the (strong) assumption that the interpolation method used to generate  the curve between those control points can be arbitrarily chosen. This is a strong assumption, which has to be validated in the implementation  and test if it introduces noticeable alterations in the interpolation results.
 
 Given a set of control points $CP=\left\{(x_k,y_k) \: , \: k \in [0 \ldots K-1]\right\}$, we consider them as a sampling of an unknown function $C(t)=(x(t),y(t))$, with an irregular sampling step $\Delta t_k$. In order to increase the sampling rate, we can approximate the length of the curve by $L=\sum_{k=0}^{K-1} \Delta k$ and specify the desired number of samples $M$ of the newly generated curve. Thus, the new sampling step is determined as $dt=L/M$ and the new sampled parameter $t_m$ is generated. Using this parameter we perform the interpolation by
 using piecewise cubic spline interpolation to generate a dense curve between the control points. We look at each coordinate of $C(t)$ as a one dimensional function $\mathcal{R}\rightarrow\mathcal{R}$ and interpolate each one independently. Thus the interpolated samples $(x_m,y_m)$ are computed as
@@ -361,7 +362,7 @@ Once we have this transform, we can perform shape operations intuitively in this
 Under the point of view of a transform, we will call Euclidean to the original space where the curve is expressed in 2D coordinates and curvature or transform space to the destination space, where curves are represented by curvature signatures.
 We will call transform to the computation of the curvature signature and antitransform or reconstruction to the inverse process.
 
-The inverse problem (reconstruct) is far more difficult that the forward one (transform), because the transform process involves computing derivatives and to achieve the opposite we will need to integrate those derivatives. We must bear in mind that in the transform process we lost the extrinsic parameters of the curve (rotation and translation), so we will have these two degrees of freedom once we reconstruct the curve.
+The inverse problem (reconstruct) is far more difficult than the forward one (transform), because the transform process involves computing derivatives and to achieve the opposite we will need to integrate those derivatives. We must bear in mind that in the transform process we lost the extrinsic parameters of the curve (rotation and translation), so we will have these two degrees of freedom once we reconstruct the curve.
 
 Let us recall that $C'(s)=T(s)$ and $C''(s)=T'(s)=\kappa(s)N(s)$. As we are assuming arc-length parametrization, $T(s)=(x'(s),y'(s))$ is a unit norm vector which is always on the unit circle. Thus we can describe it by means of $\theta$,  its angle with respect to the $x$-axis , which is expressed as
 \begin{equation}
@@ -417,7 +418,7 @@ In the original paper the authors propose to approximate the non-linear $Circ(s)
 	\item Then, integrate the recovered angle $\theta(s)$ to obtain the curve $C(s)$ according to Equation \req{eq:image_interpolation:curve_interpolation:curve_reconstruction_from_angle}.
 \end{enumerate} 
 Note that the numerical errors of the first step are passed to the input of the second step, thus the integration of the first step is performed using a higher order numerical scheme. In this case we used an explicit fourth order Runge-Kutta scheme \cite{math:numerical:dormand:1980:a_family_of_embedded_runge_kutta}. For the second step we use a standard trapezoid rule.
-Finally, as the integral is carried out using an explicit scheme, errors tend to accumulate and will produce greater differences for  big $s$ value. In Figure~\ref{fig:image_interpolation:curve_interpolation:reconstruction:sine:initial:curvature_50} we show the results of such approach. As expected, the error grows bigger as we move through the curve in the increasing $s$ direction. 
+Finally, as the integral is carried out using an explicit scheme, errors tend to accumulate and will produce greater differences for big $s$ values. In Figure~\ref{fig:image_interpolation:curve_interpolation:reconstruction:sine:initial:curvature_50} we show the results of such approach. As expected, the error grows bigger as we move through the curve in the increasing $s$ direction. 
 Despite the error, which could be easily avoided using an implicit scheme, this demonstrates that the reconstruction works as expected. In addition, in Figure \ref{fig:image_interpolation:curve_interpolation:reconstruction:sine:initial:curvature_phi_0} we show the reconstruction using a different initial condition for the angle $\varphi_0$, and we observe that the shape is still correctly recovered but the global orientation is incorrect.
 
 \begin{figure}[h]
@@ -691,9 +692,9 @@ In Figure \ref{fig:curve_interpolation:results:letter_u:output} we depict the pr
 	}
 	\label{fig:curve_interpolation:results:letter_u:output}
 \end{figure}	
-
+%
 Finally, in Figure \ref{fig:curve_interpolation:results:letter_u:animation} we describe the intermediate steps in the interpolation between both letters.
-
+%
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\anchocuatro]{\chapFiveDir/curves/letter_u/animation/interp_0.20.png}
@@ -708,7 +709,7 @@ Finally, in Figure \ref{fig:curve_interpolation:results:letter_u:animation} we d
 	\label{fig:curve_interpolation:results:letter_u:animation}
 \end{figure}	
 
-
+\clearpage
 \section{Discussion}\label{sec:curve_interpolation:discussion}
 
 In this chapter we reviewed and reproduced a curve interpolation technique based on the idea of separating intrinsic and extrinsic properties of the curve. Intrinsic description is constructed using curvature signatures and extrinsic properties are described using a rigid transform.
@@ -733,9 +734,11 @@ While the results are interesting and useful for the purpose of this work, there
 
 In the first place, we are interested in implementing the parts of the paper that were left out in this work, mainly working with closed curves and piecewise interpolated curves.
 Second, and most important, this curvature representation has proven a great potential to be used as a descriptor of the curve, for the task of interpolation. But there are other tasks that could take advantage of meaningful curve descriptors, for example for classification and stabilization tasks. As an example, we are interested in using it as a filtering technique to remove artifacts in facial features tracking.
-
+\clearpage
 \input{pseudocode_appendix}
-
+\clearpage
+\input{appendix_b_numerical_computation}
+\clearpage
 \bibliographystyle{siam}
 \bibliography{journal_list_long, curves,  varios}
 
