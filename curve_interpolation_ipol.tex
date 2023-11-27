@@ -12,7 +12,7 @@
 \documentclass{ipol}
 
 % Do not use math notations and greek letters in the title.
-\ipolSetTitle{IPOL Style Guide and Example}
+\ipolSetTitle{Intrisic Curve Interpolation}
 
 % Author names must be separated with commas (,), not "and" or "&".
 \ipolSetAuthors{Juan Cardelino \ipolAuthorMark{1}, Martín Arévalo\ipolAuthorMark{1}, Gregory Randall\ipolAuthorMark{2}}
@@ -158,11 +158,11 @@
 		\includegraphics[width=\anchodos]{\chapFiveDir/curves/example_interp_euclidean.png}
 		\label{fig:image_interpolation:curve_interpolation:example:euclidean}
 	}
-	\subfloat[Intrisinc interpolation]{
+	\subfloat[Intrinsic interpolation]{
 		\includegraphics[width=\anchodos]{\chapFiveDir/curves/example_interp_curvature.png}
 		\label{fig:image_interpolation:curve_interpolation:example:curvature}
 	}
-	\caption{Example of two possible choices of curve interpolation. Input curves are depicted in blue and red, and the interpolated curve at $t=0.5$ is depicted in green. \protect\subref{fig:image_interpolation:curve_interpolation:example:euclidean} Interpolation performed directly over the control points (Euclidean interpolaton). \protect\subref{fig:image_interpolation:curve_interpolation:example:curvature} Interpolation performed only in intrisinc shape parameters. Note how the choice of the interpolation method can greatly affect the results.}
+	\caption{Example of two possible choices of curve interpolation. Input curves are depicted in blue and red, and the interpolated curve at $t=0.5$ is depicted in green. \protect\subref{fig:image_interpolation:curve_interpolation:example:euclidean} Interpolation performed directly over the control points (Euclidean interpolation). \protect\subref{fig:image_interpolation:curve_interpolation:example:curvature} Interpolation performed only in intrinsic shape parameters. Note how the choice of the interpolation method can greatly affect the results.}
 	\label{fig:image_interpolation:curve_interpolation:example}
 \end{figure}
 %
@@ -178,7 +178,7 @@ In most of the works of the literature we can identify two parts of the 2D shape
 \begin{enumerate}
     \item \textbf{The curve representation}, which defines how the curve is described and manipulated:
         \begin{enumerate}
-            \item How the input curve is expressed: polylines, splines, sampled curves, implicit surfaces or bitmaps \tcom{Agregar referencias}.
+            \item How the input curve is expressed: poly-lines, splines, sampled curves, implicit surfaces or bitmaps \tcom{Agregar referencias}.
             \item The choice of features used for the actual blending (feature extraction), which usually includes the use of:
             directly using the input representation, using alternative representations such as the skeleton of the shape \cite{computer_science:computer_graphics:shapira:1995:shape_blending_using_the_star_skeleton} or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
         \end{enumerate}
