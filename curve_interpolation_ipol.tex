@@ -180,7 +180,7 @@ In most of the works of the literature we can identify two parts of the 2D shape
         \begin{enumerate}
             \item How the input curve is expressed: poly-lines, splines, sampled curves, implicit surfaces or bitmaps \tcom{Agregar referencias}.
             \item The choice of features used for the actual blending (feature extraction), which usually includes the use of:
-            directly using the input representation, using alternative representations such as the skeleton of the shape \cite{computer_science:computer_graphics:shapira:1995:shape_blending_using_the_star_skeleton} or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
+            directly using the input representation, using alternative representations such as the skeleton of the shape \cite{math:computational_geometry:2006:comparison_of_numerical_techniques_for_euclidean_curvature} or the interior polygons and mapping the curve to a different shape space where better properties are achieved. Examples of these spaces are Fourier Invariant Descriptors (FID) \cite{math:computer_graphics:curve_blending:ghorbel:2020:fast_blending_of_planar_shapes} and curvature based descriptors \cite{im_proc:curve_interpolation:elber:07:metamorphosis_planar_parametric_curves} \tcom{agregar más citas}. A first criterion to classify the approaches are those explicitly defining the features to compute (FID, curvature) versus those directly learning a representation. A second criterion to classify the explicit features techniques is according to the way they are computed: analytically or numerically.
         \end{enumerate}
     \item \textbf{The morphing process}, which in most cases can be described as a two-step approach:
         \begin{enumerate}
@@ -740,6 +740,6 @@ Second, and most important, this curvature representation has proven a great pot
 \input{numerical_computations_appendix}
 \clearpage
 \bibliographystyle{siam}
-\bibliography{journal_list_long, curves,  varios}
+\bibliography{journal_list_long, curves, varios}
 
 \end{document}
